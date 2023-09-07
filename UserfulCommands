@@ -1,0 +1,25 @@
+
+Get-Help -Name Get-ChildItem -Detailed
+Get-Module
+Install-Module -Name Az -Scope CurrentUser -Repository PSGallery
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+Connect-AzAccount
+Set-AzContext -Subscription '00000000-0000-0000-0000-000000000000'
+Get-AzResource -ResourceType Microsoft.Compute/virtualMachines
+$loc = "East US"
+New-AzResourceGroup -Name "MyResourceGroup" -Location $loc
+New-AzVm -ResourceGroupName "MyResourceGroup" -Name "testvm-eus-01" -Credential (Get-Credential) -Location "eastus" -Image Canonical:0001-com-ubuntu-server-focal:20_04-lts:latest -OpenPorts 22 -PublicIpAddressName "testvm-eus-01"
+$vm = (Get-AzVM -Name "testvm-eus-01" -ResourceGroupName "MyResourceGroup"
+$vm.HardwareProfile
+$vm.StorageProfile.OsDisk
+$vm | Get-AzVMSize
+Get-AzPublicIpAddress -ResourceGroupName "MyResourceGroup" -Name "testvm-eus-01"
+ssh username@205.22.16.5
+Stop-AzVM -Name $vm.Name -ResourceGroupName $vm.ResourceGroupName
+Remove-AzVM -Name $vm.Name -ResourceGroupName $vm.ResourceGroupName
+Get-AzResource -ResourceGroupName $vm.ResourceGroupName | Format-Table
+$vm | Remove-AzNetworkInterface –Force
+Get-AzDisk -ResourceGroupName $vm.ResourceGroupName -DiskName $vm.StorageProfile.OSDisk.Name | Remove-AzDisk -Force
+Get-AzVirtualNetwork -ResourceGroupName $vm.ResourceGroupName | Remove-AzVirtualNetwork -Force
+Get-AzNetworkSecurityGroup -ResourceGroupName $vm.ResourceGroupName | Remove-AzNetworkSecurityGroup -Force
+Get-AzPublicIpAddress -ResourceGroupName $vm.ResourceGroupName | Remove-AzPublicIpAddress -Force
