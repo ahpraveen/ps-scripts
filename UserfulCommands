@@ -5,6 +5,7 @@ Install-Module -Name Az -Scope CurrentUser -Repository PSGallery
 Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 Connect-AzAccount
 Set-AzContext -Subscription '00000000-0000-0000-0000-000000000000'
+Get-AzResourceGroup | Format-Table
 Get-AzResource -ResourceType Microsoft.Compute/virtualMachines
 $loc = "East US"
 New-AzResourceGroup -Name "MyResourceGroup" -Location $loc
@@ -23,3 +24,11 @@ Get-AzDisk -ResourceGroupName $vm.ResourceGroupName -DiskName $vm.StorageProfile
 Get-AzVirtualNetwork -ResourceGroupName $vm.ResourceGroupName | Remove-AzVirtualNetwork -Force
 Get-AzNetworkSecurityGroup -ResourceGroupName $vm.ResourceGroupName | Remove-AzNetworkSecurityGroup -Force
 Get-AzPublicIpAddress -ResourceGroupName $vm.ResourceGroupName | Remove-AzPublicIpAddress -Force
+
+Template to create vm
+New-AzVm
+       -ResourceGroupName <resource group name>
+       -Name <machine name>
+       -Credential <credentials object>
+       -Location <location>
+       -Image <image name>
